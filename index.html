@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
 <link rel="icon" href="tpsoft-iptv.jpeg" type="image/x-icon" />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>soTPSoft IPTV -  </title>
+<title>TPSoft IPTV - Premium Auto-Save</title>
 <!-- HLS.js for streaming -->
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <!-- Font Awesome 6 -->
@@ -23,9 +23,9 @@
     color: white;
   }
 
-  /* ========= LEFT PANEL (modern dark) ========= */
+  /* ========= LEFT PANEL ========= */
   #leftPanel {
-    position: absolute;
+    position: fixed;
     left: 0;
     top: 0;
     width: 280px;
@@ -34,7 +34,7 @@
     backdrop-filter: blur(12px);
     padding: 18px 14px;
     overflow-y: auto;
-    z-index: 15;
+    z-index: 1000;
     border-right: 1px solid rgba(255, 255, 255, 0.1);
     transform: translateX(-100%);
     transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
@@ -90,7 +90,6 @@
 
   button:active { transform: scale(0.97); }
 
-  /* Developer signature exactly like first file */
   .signature {
     margin-top: 28px;
     font-size: 12px;
@@ -110,11 +109,11 @@
 
   /* ========= PLAYER ========= */
   #playerContainer {
-    position: absolute;
+    position: fixed;
     left: 0;
     top: 0;
     width: 100%;
-    height: 100vh;
+    height: 100%;
     background: #000;
     z-index: 1;
   }
@@ -126,6 +125,17 @@
     background: black;
   }
 
+  /* ========= CONTROLS WRAPPER (for fullscreen) ========= */
+  .controls-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 100;
+  }
+  
   /* ========= TOP BAR & TABS ========= */
   .top-bar {
     position: absolute;
@@ -134,16 +144,16 @@
     right: 0;
     height: 56px;
     background: linear-gradient(to bottom, rgba(0,0,0,0.75), transparent);
-    z-index: 12;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 16px 0 20px;
-    pointer-events: none;
+    pointer-events: auto;
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
 
   #menuToggleBtn, #channelBtn {
-    pointer-events: auto;
     background: rgba(0,0,0,0.6);
     backdrop-filter: blur(8px);
     border: none;
@@ -151,31 +161,33 @@
     color: white;
     cursor: pointer;
   }
-  #menuToggleBtn { width: 44px; height: 44px; font-size: 22px; display: flex; align-items: center; justify-content: center; }
-  #channelBtn { padding: 8px 18px; font-weight: bold; font-size: 14px; border: 1px solid rgba(255,255,255,0.2); }
-  #channelBtn i { margin-right: 8px; }
+  #menuToggleBtn { width: 40px; height: 40px; font-size: 18px; display: flex; align-items: center; justify-content: center; }
+  #channelBtn { padding: 6px 14px; font-weight: bold; font-size: 13px; border: 1px solid rgba(255,255,255,0.2); }
+  #channelBtn i { margin-right: 6px; }
 
   #countryTabs {
     position: absolute;
     top: 68px;
     left: 20px;
     right: 20px;
-    z-index: 12;
     display: flex;
-    gap: 10px;
+    gap: 8px;
     overflow-x: auto;
     white-space: nowrap;
     padding-bottom: 8px;
     scrollbar-width: thin;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: auto;
   }
 
   #countryTabs button {
     width: auto;
     background: rgba(0,0,0,0.65);
     backdrop-filter: blur(8px);
-    padding: 8px 20px;
+    padding: 6px 16px;
     border-radius: 40px;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
     color: #eee;
     border: 1px solid rgba(255,255,255,0.2);
@@ -200,7 +212,7 @@
     backdrop-filter: blur(16px);
     display: none;
     flex-direction: column;
-    z-index: 40;
+    z-index: 10000;
     border-left: 1px solid rgba(255,255,255,0.15);
   }
 
@@ -242,57 +254,110 @@
 
   .channel:hover { background: rgba(255, 102, 0, 0.3); }
   .channel.active { background: #ff6600; color: #111; }
-  .channel img { width: 48px; height: 48px; border-radius: 12px; object-fit: cover; background: #2a2a2a; }
+  .channel img { width: 45px; height: 45px; border-radius: 10px; object-fit: cover; background: #2a2a2a; }
   .channel div { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
   /* ========= BOTTOM CONTROLS ========= */
   #bottomControls {
     position: absolute;
-    bottom: 28px;
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    gap: 20px;
+    gap: 12px;
     background: rgba(0,0,0,0.65);
     backdrop-filter: blur(20px);
-    padding: 12px 24px;
-    border-radius: 80px;
-    z-index: 20;
+    padding: 8px 20px;
+    border-radius: 60px;
     border: 1px solid rgba(255,255,255,0.2);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: auto;
+  }
+  
+  #bottomControls.visible {
+    opacity: 1;
   }
 
   .ctrlBtn {
-    width: 52px;
-    height: 52px;
-    border-radius: 60px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
     background: rgba(20,20,30,0.9);
     color: white;
-    font-size: 22px;
+    font-size: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     border: none;
+    transition: 0.1s linear;
   }
+  
+  .ctrlBtn:active { background: #ff6600; transform: scale(0.94); }
 
-  .vol-slider { display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.5); padding: 5px 12px; border-radius: 40px; }
-  #volumeRange { width: 80px; margin: 0; }
+  .vol-slider { 
+    display: flex; 
+    align-items: center; 
+    gap: 6px; 
+    background: rgba(0,0,0,0.5); 
+    padding: 4px 10px; 
+    border-radius: 40px; 
+  }
+  #volumeRange { 
+    width: 70px; 
+    margin: 0; 
+    padding: 0;
+    height: 3px;
+    -webkit-appearance: none;
+    background: #ff6600;
+    border-radius: 3px;
+  }
+  #volumeRange::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+  }
+  
   .toast-msg {
     position: fixed;
-    bottom: 100px;
+    bottom: 90px;
     left: 50%;
     transform: translateX(-50%);
     background: #1f1f2fcc;
     backdrop-filter: blur(16px);
-    padding: 8px 20px;
+    padding: 6px 16px;
     border-radius: 40px;
-    font-size: 13px;
-    z-index: 100;
+    font-size: 12px;
+    z-index: 10000;
     pointer-events: none;
     transition: 0.2s;
     color: #ffcc99;
+    white-space: nowrap;
   }
-  @media (max-width: 760px) { .ctrlBtn { width: 48px; height: 48px; } }
+  
+  /* Controls visible class */
+  .controls-visible .top-bar,
+  .controls-visible #countryTabs,
+  .controls-visible #bottomControls {
+    opacity: 1 !important;
+  }
+  
+  /* Fullscreen specific styles */
+  .fullscreen-mode .top-bar,
+  .fullscreen-mode #countryTabs,
+  .fullscreen-mode #bottomControls {
+    opacity: 1 !important;
+  }
+  
+  @media (max-width: 760px) { 
+    .ctrlBtn { width: 38px; height: 38px; font-size: 16px; }
+    #bottomControls { gap: 10px; padding: 6px 16px; }
+    #volumeRange { width: 60px; }
+  }
 </style>
 </head>
 <body>
@@ -301,7 +366,7 @@
 <div id="leftPanel">
   <div style="display: flex; justify-content: space-between; align-items: center;">
 <image width=50 height=50 src="tpsoft-iptv.jpeg"><br>
-    <h2 style="color:#ff6600; margin:0;"><i class=""></i>TPSoft IPTV</h2>
+    <h2 style="color:#ff6600; margin:0;"><i class="fas fa-savex"></i> TPSoft IPTV</h2>
     <button id="closeDrawerBtn" style="width:40px; background:none; box-shadow:none; font-size:22px;"><i class="fas fa-times"></i></button>
   </div>
   
@@ -313,55 +378,55 @@
     <option value="https://iptv-org.github.io/iptv/categories/news.m3u">News Channels</option>
     <option value="https://iptv-org.github.io/iptv/categories/sports.m3u">Sports Channels</option>
   </datalist>
-  <button onclick="loadM3UUrl()"><i class="fas fa-play-circle"></i>    </button>
+  <button onclick="loadM3UUrl()"><i class="fas fa-play-circle"></i> Load & Save</button>
 
-  <h3><i class="fas fa-upload"></i> M3U </h3>
+  <h3><i class="fas fa-upload"></i> M3U File</h3>
   <input type="file" id="fileInput" accept=".m3u,.m3u8">
 
   <h3><i class="fas fa-cloud"></i> Xtream Codes</h3>
   <input id="xt_server" placeholder="Server URL (http://domain:port)">
   <input id="xt_user" placeholder="Username">
   <input id="xt_pass" placeholder="Password">
-  <button onclick="xtreamLogin()"><i class="fas fa-sign-in-alt"></i> Xtream </button>
+  <button onclick="xtreamLogin()"><i class="fas fa-sign-in-alt"></i> Xtream Login</button>
 
-  <h3><i class="fas fa-server"></i>  M3U (M3U Plus)</h3>
+  <h3><i class="fas fa-server"></i> Server M3U (M3U Plus)</h3>
   <input id="srv_url" placeholder="Server base URL">
   <input id="srv_user" placeholder="Username">
   <input id="srv_pass" placeholder="Password">
-  <button onclick="serverM3U()"><i class="fas fa-database"></i>   </button>
+  <button onclick="serverM3U()"><i class="fas fa-database"></i> Load & Save</button>
 
-  <!-- Developer Signature exactly like first file -->
   <div class="signature">
     <div><span style="color: #00cc66;">Developed by-</span></div>
     <div class="dev-name">PANKAJ BARUA</div>
     <div class="company">TP Soft, Chattogram</div>
-    <div style="margin-top: 6px; font-size: 10px; color: #aaa;"><i class="fas fa-save"></i>   |   </div>
+    <div style="margin-top: 6px; font-size: 10px; color: #aaa;"><i class="fas fa-save"></i> Auto-save active | Preserved after refresh</div>
   </div>
 </div>
 
-<div class="top-bar">
-  <button id="menuToggleBtn"><i class="fas fa-bars"></i></button>
-  <div id="channelBtn"><i class="fas fa-list-ul"></i>  </div>
+<div class="controls-wrapper">
+  <div class="top-bar" id="topBar">
+    <button id="menuToggleBtn"><i class="fas fa-bars"></i></button>
+    <div id="channelBtn"><i class="fas fa-list"></i> Channels</div>
+  </div>
+  <div id="countryTabs"></div>
+  <div id="bottomControls">
+    <button class="ctrlBtn" onclick="prevChannel()"><i class="fas fa-step-backward"></i></button>
+    <button class="ctrlBtn" onclick="togglePlay()"><i class="fas fa-play" id="playPauseIcon"></i></button>
+    <button class="ctrlBtn" onclick="nextChannel()"><i class="fas fa-step-forward"></i></button>
+    <div class="vol-slider"><i class="fas fa-volume-up"></i><input type="range" id="volumeRange" min="0" max="100" value="70"></div>
+  </div>
 </div>
-<div id="countryTabs"></div>
 
 <div id="playerContainer">
   <video id="video" controls autoplay playsinline></video>
 </div>
 
-<div id="bottomControls">
-  <button class="ctrlBtn" onclick="prevChannel()"><i class="fas fa-step-backward"></i></button>
-  <button class="ctrlBtn" onclick="togglePlay()"><i class="fas fa-play" id="playPauseIcon"></i></button>
-  <button class="ctrlBtn" onclick="nextChannel()"><i class="fas fa-step-forward"></i></button>
-  <div class="vol-slider"><i class="fas fa-volume-up"></i><input type="range" id="volumeRange" min="0" max="100" value="70"></div>
-</div>
-
 <div id="overlay">
-  <div class="overlay-header"><h3><i class="fas fa-list"></i>  </h3><button id="closeOverlay" style="background:none;"><i class="fas fa-times"></i></button></div>
-  <input id="searchBox" placeholder="  ..." onkeyup="searchChannel()">
+  <div class="overlay-header"><h3><i class="fas fa-list"></i> Channel List</h3><button id="closeOverlay" style="background:none;"><i class="fas fa-times"></i></button></div>
+  <input id="searchBox" placeholder="🔍 Search channels..." onkeyup="searchChannel()">
   <div id="popup"></div>
 </div>
-<div id="toastMsg" class="toast-msg" style="opacity:0;">    ...</div>
+<div id="toastMsg" class="toast-msg">✅ Loading saved data...</div>
 
 <script>
   // DOM elements
@@ -376,7 +441,82 @@
   const closeOverlayBtn = document.getElementById("closeOverlay");
   const volumeSlider = document.getElementById("volumeRange");
   const playPauseIcon = document.getElementById("playPauseIcon");
-
+  const bottomControls = document.getElementById("bottomControls");
+  const topBar = document.getElementById("topBar");
+  const controlsWrapper = document.querySelector(".controls-wrapper");
+  
+  // Auto-hide timer
+  let hideTimer = null;
+  
+  function showControls() {
+    if(controlsWrapper) {
+      controlsWrapper.classList.add("controls-visible");
+    }
+    if(topBar) topBar.style.opacity = "1";
+    if(tabsDiv) tabsDiv.style.opacity = "1";
+    if(bottomControls) bottomControls.classList.add("visible");
+    
+    if(hideTimer) clearTimeout(hideTimer);
+    
+    hideTimer = setTimeout(() => {
+      // Don't auto-hide in fullscreen mode
+      if(!document.fullscreenElement && !document.webkitFullscreenElement) {
+        if(topBar) topBar.style.opacity = "0";
+        if(tabsDiv) tabsDiv.style.opacity = "0";
+        if(bottomControls) bottomControls.classList.remove("visible");
+        if(controlsWrapper) controlsWrapper.classList.remove("controls-visible");
+      }
+    }, 3000);
+  }
+  
+  function onUserActivity() {
+    showControls();
+  }
+  
+  // Fullscreen detection
+  function handleFullscreenChange() {
+    const isFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    if(isFullscreen) {
+      // In fullscreen mode, always show controls
+      if(topBar) topBar.style.opacity = "1";
+      if(tabsDiv) tabsDiv.style.opacity = "1";
+      if(bottomControls) bottomControls.classList.add("visible");
+      if(controlsWrapper) controlsWrapper.classList.add("controls-visible");
+    } else {
+      // Exit fullscreen - reset to normal behavior
+      if(hideTimer) clearTimeout(hideTimer);
+      hideTimer = setTimeout(() => {
+        if(topBar) topBar.style.opacity = "0";
+        if(tabsDiv) tabsDiv.style.opacity = "0";
+        if(bottomControls) bottomControls.classList.remove("visible");
+        if(controlsWrapper) controlsWrapper.classList.remove("controls-visible");
+      }, 3000);
+    }
+  }
+  
+  document.addEventListener("fullscreenchange", handleFullscreenChange);
+  document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+  
+  // Activity listeners
+  document.addEventListener("mousemove", onUserActivity);
+  document.addEventListener("click", onUserActivity);
+  document.addEventListener("keydown", onUserActivity);
+  video.addEventListener("click", onUserActivity);
+  document.addEventListener("touchstart", onUserActivity);
+  video.addEventListener("play", onUserActivity);
+  video.addEventListener("pause", onUserActivity);
+  
+  // Also listen for fullscreen button click on video
+  video.addEventListener("webkitbeginfullscreen", () => {
+    setTimeout(() => {
+      if(topBar) topBar.style.opacity = "1";
+      if(tabsDiv) tabsDiv.style.opacity = "1";
+      if(bottomControls) bottomControls.classList.add("visible");
+    }, 100);
+  });
+  
+  setTimeout(showControls, 500);
+  
   let hls = null;
   let filteredChannels = [];
   let currentIndex = 0;
@@ -415,7 +555,7 @@
         renderChannelList();
         if(filteredChannels.length && currentIndex < filteredChannels.length) playChannel(currentIndex);
         else if(filteredChannels.length) playChannel(0);
-        showToast(`    (${filteredChannels.length})  `, 2500);
+        showToast(`📀 Loaded ${filteredChannels.length} saved channels`, 2500);
         return true;
       }
     } catch(e) {}
@@ -439,6 +579,7 @@
         renderChannelList();
         document.getElementById("searchBox").value = "";
         saveToLocalStorage();
+        onUserActivity();
       };
       tabsDiv.appendChild(btn);
     });
@@ -467,6 +608,7 @@
         renderChannelList();
         document.getElementById("searchBox").value = "";
         saveToLocalStorage();
+        onUserActivity();
       };
       tabsDiv.appendChild(btn);
     });
@@ -476,13 +618,13 @@
 
   function renderChannelList() {
     popupDiv.innerHTML = "";
-    if(!filteredChannels.length) { popupDiv.innerHTML = "<div style='padding:20px'>  </div>"; return; }
+    if(!filteredChannels.length) { popupDiv.innerHTML = "<div style='padding:20px'>No channels found</div>"; return; }
     filteredChannels.forEach((c, idx) => {
       const div = document.createElement("div");
       div.className = "channel" + (idx === currentIndex ? " active" : "");
       const logoUrl = (c.logo && c.logo.startsWith("http")) ? c.logo : "https://via.placeholder.com/48?text=TV";
       div.innerHTML = `<img src="${logoUrl}" onerror="this.src='https://via.placeholder.com/48?text=TP'"><div style="flex:1;">${escapeHtml(c.name)}</div>`;
-      div.onclick = () => { playChannel(idx); closeMenu(); };
+      div.onclick = () => { playChannel(idx); closeMenu(); onUserActivity(); };
       popupDiv.appendChild(div);
     });
   }
@@ -504,15 +646,16 @@
       hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(e=>{}));
     } else {
       video.src = ch.url;
-      video.play().catch(e=>showToast(" ", 1200));
+      video.play().catch(e=>showToast("Playback error", 1200));
     }
     renderChannelList();
     document.title = `${ch.name} - TPSoft IPTV`;
-    showToast(` ${ch.name}`, 1200);
+    showToast(`📺 ${ch.name}`, 1200);
     saveToLocalStorage();
+    onUserActivity();
   }
 
-  function parseM3U(content, sourceName = "") {
+  function parseM3U(content, sourceName = "Playlist") {
     const lines = content.split(/\r?\n/);
     let channelsArray = [];
     let currentExtInf = null;
@@ -526,7 +669,7 @@
         if(groupMatch) group = groupMatch[1];
         let parts = line.split(",");
         if(parts.length>1) name = parts.slice(1).join(",").trim();
-        if(!name) name = "";
+        if(!name) name = "Channel";
         currentExtInf = { name, logo, group };
       }
       else if(line.startsWith("http") && currentExtInf) {
@@ -534,7 +677,7 @@
         currentExtInf = null;
       }
     }
-    if(channelsArray.length === 0) { showToast("   ", 2000); return; }
+    if(channelsArray.length === 0) { showToast("No channels found", 2000); return; }
     const newGroups = {};
     channelsArray.forEach(ch => { let g = ch.group || "Default"; if(!newGroups[g]) newGroups[g] = []; newGroups[g].push(ch); });
     groupsMap = newGroups;
@@ -544,20 +687,20 @@
     currentIndex = 0;
     playChannel(0);
     renderChannelList();
-    showToast(` ${channelsArray.length}   `, 2500);
+    showToast(`✅ ${channelsArray.length} channels saved`, 2500);
     saveToLocalStorage();
   }
 
   async function loadM3UUrl() {
     const url = document.getElementById("m3uUrl").value.trim();
-    if(!url) { showToast(" URL ", 1500); return; }
+    if(!url) { showToast("Enter playlist URL", 1500); return; }
     try {
-      showToast(" ...");
+      showToast("Fetching...");
       const res = await fetch(url);
       if(!res.ok) throw new Error(`HTTP ${res.status}`);
       const text = await res.text();
       parseM3U(text, url);
-    } catch(e) { showToast("  : "+e.message, 2000); }
+    } catch(e) { showToast("Failed to load: "+e.message, 2000); }
   }
 
   document.getElementById("fileInput").onchange = (e) => {
@@ -572,14 +715,14 @@
     let server = document.getElementById("xt_server").value.trim();
     let user = document.getElementById("xt_user").value.trim();
     let pass = document.getElementById("xt_pass").value.trim();
-    if(!server || !user || !pass) { showToast(",    ", 1500); return; }
+    if(!server || !user || !pass) { showToast("Server, username & password required", 1500); return; }
     if(!server.startsWith("http")) server = "http://"+server;
     try {
       const apiUrl = `${server}/player_api.php?username=${user}&password=${pass}&action=get_live_streams`;
       const response = await fetch(apiUrl);
       const data = await response.json();
-      if(!Array.isArray(data) || data.length===0) throw new Error("  ");
-      const channelsList = data.map(stream => ({ name: stream.name || "", url: `${server}/live/${user}/${pass}/${stream.stream_id}.m3u8`, logo: stream.stream_icon || "", group: stream.category_name || "Xtream " }));
+      if(!Array.isArray(data) || data.length===0) throw new Error("No streams found");
+      const channelsList = data.map(stream => ({ name: stream.name || "Channel", url: `${server}/live/${user}/${pass}/${stream.stream_id}.m3u8`, logo: stream.stream_icon || "", group: stream.category_name || "Xtream Live" }));
       const grpMap = {};
       channelsList.forEach(ch => { let g = ch.group; if(!grpMap[g]) grpMap[g] = []; grpMap[g].push(ch); });
       groupsMap = grpMap;
@@ -589,51 +732,53 @@
       currentIndex = 0;
       playChannel(0);
       renderChannelList();
-      showToast(`Xtream: ${channelsList.length}   `, 2000);
+      showToast(`Xtream: ${channelsList.length} channels saved`, 2000);
       saveToLocalStorage();
-    } catch(err) { showToast("Xtream : "+err.message, 2000); }
+    } catch(err) { showToast("Xtream error: "+err.message, 2000); }
   }
 
   async function serverM3U() {
     let srv = document.getElementById("srv_url").value.trim();
     let user = document.getElementById("srv_user").value.trim();
     let pass = document.getElementById("srv_pass").value.trim();
-    if(!srv || !user || !pass) { showToast(" URL,    ", 1500); return; }
+    if(!srv || !user || !pass) { showToast("Server URL, username & password required", 1500); return; }
     if(!srv.startsWith("http")) srv = "http://"+srv;
     const url = `${srv}/get.php?username=${user}&password=${pass}&type=m3u_plus&output=m3u8`;
     try {
       const res = await fetch(url);
-      if(!res.ok) throw new Error("  ");
+      if(!res.ok) throw new Error("Server authentication failed");
       const text = await res.text();
-      parseM3U(text, " M3U");
-    } catch(e) { showToast("  : "+e.message, 2000); }
+      parseM3U(text, "Server M3U");
+    } catch(e) { showToast("Server load failed: "+e.message, 2000); }
   }
 
-  window.nextChannel = () => { if(filteredChannels.length) playChannel((currentIndex+1)%filteredChannels.length); };
-  window.prevChannel = () => { if(filteredChannels.length) playChannel((currentIndex-1+filteredChannels.length)%filteredChannels.length); };
-  window.togglePlay = () => { video.paused ? video.play().catch(e=>{}) : video.pause(); };
+  window.nextChannel = () => { if(filteredChannels.length) { playChannel((currentIndex+1)%filteredChannels.length); onUserActivity(); } };
+  window.prevChannel = () => { if(filteredChannels.length) { playChannel((currentIndex-1+filteredChannels.length)%filteredChannels.length); onUserActivity(); } };
+  window.togglePlay = () => { video.paused ? video.play().catch(e=>{}) : video.pause(); onUserActivity(); };
   window.searchChannel = () => {
     const q = document.getElementById("searchBox").value.toLowerCase();
     if(!q.trim()) filteredChannels = groupsMap[currentGroup] || [];
     else filteredChannels = (groupsMap[currentGroup] || []).filter(c => c.name.toLowerCase().includes(q));
     renderChannelList();
+    onUserActivity();
   };
   
-  function openMenu() { leftPanel.classList.add("open"); }
-  function closeMenuDrawer() { leftPanel.classList.remove("open"); }
-  window.toggleMenu = function() { overlayDiv.classList.toggle("show"); if(overlayDiv.classList.contains("show")) renderChannelList(); };
-  function closeMenu() { overlayDiv.classList.remove("show"); }
+  function openMenu() { leftPanel.classList.add("open"); onUserActivity(); }
+  function closeMenuDrawer() { leftPanel.classList.remove("open"); onUserActivity(); }
+  window.toggleMenu = function() { overlayDiv.classList.toggle("show"); if(overlayDiv.classList.contains("show")) renderChannelList(); onUserActivity(); };
+  function closeMenu() { overlayDiv.classList.remove("show"); onUserActivity(); }
   
-  menuToggle.onclick = () => { if(leftPanel.classList.contains("open")) closeMenuDrawer(); else openMenu(); };
+  menuToggle.onclick = () => { if(leftPanel.classList.contains("open")) closeMenuDrawer(); else openMenu(); onUserActivity(); };
   closeDrawer.onclick = closeMenuDrawer;
-  channelBtnHeader.onclick = toggleMenu;
+  channelBtnHeader.onclick = () => { toggleMenu(); onUserActivity(); };
   closeOverlayBtn.onclick = closeMenu;
-  volumeSlider.addEventListener("input", () => video.volume = volumeSlider.value/100);
+  volumeSlider.addEventListener("input", () => { video.volume = volumeSlider.value/100; onUserActivity(); });
   video.volume = 0.7; volumeSlider.value=70;
   video.addEventListener("play", () => playPauseIcon.className = "fas fa-pause");
   video.addEventListener("pause", () => playPauseIcon.className = "fas fa-play");
 
   document.addEventListener("keydown", (e) => {
+    onUserActivity();
     if(e.key === "ArrowRight") { nextChannel(); e.preventDefault(); }
     if(e.key === "ArrowLeft") { prevChannel(); e.preventDefault(); }
     if(e.key === "ArrowUp") { openMenu(); e.preventDefault(); }
@@ -644,7 +789,7 @@
 
   const loaded = loadFromLocalStorage();
   if(!loaded) {
-    showToast("! M3U      (  )", 3000);
+    showToast("Welcome! Load M3U URL or file (auto-save enabled)", 3000);
   }
 </script>
 </body>
